@@ -4,20 +4,21 @@ import java_cup.runtime.*;
       
 %%
 
-    %class Lexer
-    %line
-    %column
-    %cup
+%line
+%column
+%cup
    
-    %{   
-        private Symbol symbol(int type) {
-            return new Symbol(type, yyline, yycolumn);
-        }
+%{   
+    StringBuffer string = new StringBuffer();
 
-        private Symbol symbol(int type, Object value) {
-            return new Symbol(type, yyline, yycolumn, value);
-        }
-    %}
+    private Symbol symbol(int type) {
+        return new Symbol(type, yyline, yycolumn);
+    }
+
+    private Symbol symbol(int type, Object value) {
+        return new Symbol(type, yyline, yycolumn, value);
+    }
+%}
 
     LineTerminator = \r|\n|\r\n
     InputCharacter = [^\r\n]
@@ -36,7 +37,7 @@ import java_cup.runtime.*;
 
     Number = [0-9]+(\.[0-9]+)?
 
-    %state STRING
+%state STRING
 
 %%
 
@@ -79,7 +80,7 @@ import java_cup.runtime.*;
     <YYINITIAL> "CrearControlNumerico"              { return symbol(sym.CREARNUMERICO); }
     <YYINITIAL> "CrearDesplegable"                  { return symbol(sym.CREARDESPLEGABLE); }
     <YYINITIAL> "CrearBoton"                        { return symbol(sym.CREARBOTON); }
-    <YYTINITAL> "CrearImagen"                       { return symbol(sym.CREARIMAGEN); }
+    <YYINITIAL> "CrearImagen"                       { return symbol(sym.CREARIMAGEN); }
     <YYINITIAL> "CrearReproductor"                  { return symbol(sym.CREARREPRODUCTOR); }
     <YYINITIAL> "CrearVideo"                        { return symbol(sym.CREARVIDEO); }
     <YYINITIAL> "AlClic"                            { return symbol(sym.ALCLIC); }
@@ -88,10 +89,10 @@ import java_cup.runtime.*;
 
     <YYINITIAL> {
         /* identifiers */ 
-        {Identifier}                                { return symbol(sym.IDENTIFIER); }
+        {Identifier}                                { return symbol(sym.ID); }
 
         /* literals */
-        {Number}                                    { return symbol(sym.NUMBER_LITERAL, yytext()); }
+        {Number}                                    { return symbol(sym.NUM, yytext()); }
         \"                                          { string.setLength(0); yybegin(STRING); }
 
         /* group signs */
@@ -103,34 +104,35 @@ import java_cup.runtime.*;
         "]"                                         { return symbol(sym.RBRACK); }
 
         /* operators */
-        "="                                         { return symbol(sym.EQ); }
-        
-        "+"                                         { return symbol(sym.PLUS); }
-        "-"                                         { return symbol(sym.MINUS); }
-        "*"                                         { return symbol(sym.TIMES); }
-        "/"                                         { return symbol(sym.DIV); }
-        "^"                                         { return symbol(sym.POW); }
         "++"                                        { return symbol(sym.PLUSPLUS); }
         "--"                                        { return symbol(sym.MINUSMINUS); }
         "+="                                        { return symbol(sym.PLUSEQ); }
         "-="                                        { return symbol(sym.MINUSEQ); }
         "*="                                        { return symbol(sym.TIMESEQ); }
         "/="                                        { return symbol(sym.DIVEQ); }
+        
+        "+"                                         { return symbol(sym.PLUS); }
+        "-"                                         { return symbol(sym.MINUS); }
+        "*"                                         { return symbol(sym.TIMES); }
+        "/"                                         { return symbol(sym.DIV); }
+        "^"                                         { return symbol(sym.POW); }
 
-        ">"                                         { return symbol(sym.MORETHAN); }
-        "<"                                         { return symbol(sym.LESSTHAN); }
         ">="                                        { return symbol(sym.MORETHANEQ); }
         "<="                                        { return symbol(sym.LESSTHANEQ); }
         "=="                                        { return symbol(sym.EQEQ); }
         "!="                                        { return symbol(sym.NOTEQ); }
+        ">"                                         { return symbol(sym.MORETHAN); }
+        "<"                                         { return symbol(sym.LESSTHAN); }
 
         "&&"                                        { return symbol(sym.AND); }
         "||"                                        { return symbol(sym.OR); }
         "!"                                         { return symbol(sym.NOT); }
 
+        "="                                         { return symbol(sym.EQ); }
+
         /* punctuation */
         ":"                                         { return symbol(sym.COLON); }
-        ";"                                         { return symbol(sym.SEMICOLON); }
+        ";"                                         { return symbol(sym.SEMI); }
         ","                                         { return symbol(sym.COMMA); }
         "."                                         { return symbol(sym.DOT); }
         "?"                                         { return symbol(sym.Q); }
