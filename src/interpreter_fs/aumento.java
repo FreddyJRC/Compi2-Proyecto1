@@ -21,7 +21,10 @@ public class aumento extends nodo {
 
     @Override
     public nodo run(env ambiente) {
-        this.val = ambiente.get(id);
+        simbol s = ambiente.get(id);
+        if(s.tipo.equalsIgnoreCase("var")){
+            this.val = s.val;
+        }
         
         if(this.val instanceof Integer){
             ambiente.set(id, ((int)val + this.aumento));

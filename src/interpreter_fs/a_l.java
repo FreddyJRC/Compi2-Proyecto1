@@ -19,14 +19,14 @@ public class a_l extends nodo {
 
     @Override
     public nodo run(env ambiente) {
-        try{
-            this.l.run(ambiente);
-        }catch(Break b){
-            //return this;
-        }catch(Return r){
-            this.val = r.val;
-        }
-        
+//        try{
+//            this.l.run(ambiente);
+//        }catch(Break b){
+//            //return this;
+//        }catch(Return r){
+//            this.val = r.val;
+//        }
+        this.l.run(ambiente);
         this.a.run(ambiente);
         return this;
     }

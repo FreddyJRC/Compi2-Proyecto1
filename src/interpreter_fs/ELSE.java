@@ -9,19 +9,18 @@ package interpreter_fs;
  *
  * @author freddy
  */
-public class Obj_a extends nodo {
-    String id;
-    nodo e;
-    
-    public Obj_a(String id, nodo e){
-        this.id = id;
-        this.e = e;
-    }
+public class ELSE extends nodo {
 
+    nodo a;
+    
+    public ELSE(nodo a){
+        this.a = a;
+    }
+    
     @Override
-    public nodo run(env ambiente) {        
-        this.val = this.e.run(ambiente).val;
-        
+    public nodo run(env ambiente) {
+        a.run(new env(ambiente));
         return this;
     }
+    
 }

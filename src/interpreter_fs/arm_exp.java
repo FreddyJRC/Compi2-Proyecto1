@@ -15,7 +15,7 @@ public class arm_exp extends nodo {
     String op;
     
     public arm_exp(nodo e1, nodo e2, String op){
-        this.val = e1;
+        this.e1 = e1;
         this.e2 = e2;
         this.op = op;
     }

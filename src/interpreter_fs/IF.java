@@ -9,21 +9,24 @@ package interpreter_fs;
  *
  * @author freddy
  */
-public class asign extends nodo{
+public class IF extends nodo {
 
-    String id;
-    nodo e;
+    nodo e, a;
     
-    public asign(String id, nodo e){
-        this.id = id;
-        this.e = e;
+    public IF(nodo e, nodo a){
+        this.e = e; 
+        this.a = a;
     }
     
     @Override
     public nodo run(env ambiente) {
-        Object e = null;
-        if(this.e != null) e = this.e.run(ambiente).val;
-        ambiente.set((String)this.id, e);
+        Object e = this.e.run(ambiente).val;
+        if(e instanceof Boolean){
+            if((boolean)e){
+                this.a.run(new env(ambiente));
+            }
+        }
+        
         return this;
     }
     

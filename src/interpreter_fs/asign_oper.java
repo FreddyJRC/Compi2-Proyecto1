@@ -90,7 +90,7 @@ public class asign_oper extends nodo {
             case 4:
                 if(val instanceof Integer){
                     if(e instanceof Integer){
-                        this.val = (double)val / (double)e;
+                        this.val = (int)val / (double)((int)e);
                     }else if(e instanceof Double){
                         this.val = (double)((int)val / (double)e);
                     }
@@ -107,12 +107,14 @@ public class asign_oper extends nodo {
     
     @Override
     public nodo run(env ambiente) {
-        Object val = ambiente.get(id);
-        Object e = this.e.run(ambiente).val;
-        setVal(val, e);
-        
-        ambiente.set(id, this.val);
-        
+        simbol tmp = ambiente.get(this.id);
+        if(tmp.tipo.equalsIgnoreCase("var")){
+            Object val = tmp.val;
+            Object e = this.e.run(ambiente).val;
+            setVal(val, e);
+
+            ambiente.set(this.id, this.val);
+        }
         return this;
     }
     

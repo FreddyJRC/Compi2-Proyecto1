@@ -31,15 +31,18 @@ terminal                UPLUSPLUS, UMINUSMINUS, UMINUS, UNOT;
 /* Non terminals */
 non terminal                S;
 non terminal    nodo        L, A, As, Func, call_f, Dec, Dec_, Asign, E;
-non terminal    nodo        Obj_a, DecInc;
-non terminal    LinkedList  l_para, l_E, l_Obj_a;
+non terminal    nodo        Obj_a, DecInc, IF, ELSE_IF, ELSE, SWITCH, ARR_FN;
+non terminal    nodo        VAL, PRIM;
+non terminal    LinkedList  l_para, l_E, l_Obj_a, CASE;
 
 /* Precedences */
+precedence left DOT;
 precedence left Q;
 precedence left OR;
 precedence left AND;
 precedence right UNOT;
-precedence left MORETHAN, LESSTHAN, MORETHANEQ, LESSTHANEQ, EQEQ, NOTEQ;
+precedence left EQEQ, NOTEQ;
+precedence left MORETHAN, LESSTHAN, MORETHANEQ, LESSTHANEQ;
 precedence left PLUS, MINUS;
 precedence left TIMES, DIV;
 precedence left POW;
@@ -65,6 +68,9 @@ As      ::= Dec:d SEMI                                                          
         |   RETORNAR E:e SEMI                                                   {: RESULT = new retornar(e); :}
         |   Func:f                                                              {: RESULT = f; :}
         |   call_f:f SEMI                                                       {: RESULT = f; :}
+        |   IF:f                                                                {: RESULT = f; :}
+        |   SWITCH:s                                                            {: RESULT = s; :}
+        |   ARR_FN:a SEMI                                                       {: RESULT = a; :}
         ;
 
 Func    ::= FUNCION ID:i LPAR l_para:l RPAR LCURL A:a RCURL                     {: RESULT = new Func(i, l, a); :}
@@ -75,7 +81,7 @@ call_f  ::= ID:i LPAR l_E:e RPAR                                                
         |   ID:i LPAR RPAR                                                      {: RESULT = new call_f(i, null); :}
         ;
 
-l_para  ::= l_para:l VAR ID:i                                                   {: l.add(i);
+l_para  ::= l_para:l COMMA VAR ID:i                                             {: l.add(i);
                                                                                    RESULT = l; 
                                                                                 :}
         |   VAR ID:i                                                            {: LinkedList<String> list = new LinkedList<>();
@@ -96,6 +102,9 @@ Dec_    ::= ID:i                                                                
         ;
 
 Asign   ::= ID:i EQ E:e                                                         {: RESULT = new asign(i, e); :}
+        |   ID:i LBRACK NUM:p RBRACK EQ E:e                                     {: RESULT = new asign_arr(i, Integer.parseInt(p), e); :}
+        |   ID:o DOT ID:i EQ E:e                                                {: RESULT = new Obj_putId(o, i, e); :}
+        |   ID:o DOT ID:i LBRACK NUM:p RBRACK EQ E:e                            {: RESULT = new Obj_putArr(o, i, Integer.parseInt(p), e); :}
         |   ID:i PLUSPLUS                                                       {: RESULT = new aumento(i, 1); :}
         |   ID:i MINUSMINUS                                                     {: RESULT = new aumento(i, -1); :}
         |   ID:i PLUSEQ E:e                                                     {: RESULT = new asign_oper(i, e, 1); :}
@@ -114,6 +123,44 @@ l_Obj_a ::= l_Obj_a:l COMMA Obj_a:o                                             
 Obj_a   ::= ID:i COLON E:e                                                      {: RESULT = new Obj_a(i, e); :}
         |   ID:i COLON LBRACK RBRACK                                            {: RESULT = new Obj_a_arr(i, null); :}
         |   ID:i COLON LBRACK l_E:e RBRACK                                      {: RESULT = new Obj_a_arr(i, e); :}
+        ;
+
+IF      ::= SI LPAR E:e RPAR LCURL A:a RCURL                                    {: RESULT = new IF(e, a); :}
+        |   SI LPAR E:e RPAR LCURL A:a RCURL ELSE_IF:ef                         {: RESULT = new IF_ELSE(e, a, ef); :}
+        ;
+
+ELSE_IF ::= SINO SI LPAR E:e RPAR LCURL A:a RCURL ELSE_IF:ef                    {: RESULT = new IF_ELSE(e, a, ef); :}
+        |   SINO SI LPAR E:e RPAR LCURL A:a RCURL                               {: RESULT = new IF_ELSE(e, a, null); :}
+        |   ELSE:el                                                             {: RESULT = el; :}
+        ;
+
+ELSE    ::= SINO LCURL A:a RCURL                                                {: RESULT = new ELSE(a); :}
+        ;
+
+SWITCH  ::= SELECCIONA LPAR E:e RPAR LCURL CASE:c RCURL                         {: RESULT = new SWITCH(e, c); :}
+        ;
+
+CASE    ::= CASO E:e COLON LCURL A:a RCURL CASE:c                               {: LinkedList<nodo> tmp = new LinkedList<>();
+                                                                                   tmp.add(new CASE(e, a));
+                                                                                   tmp.addAll(c);
+                                                                                   RESULT = tmp;
+                                                                                :}
+        |   CASO E:e COLON LCURL A:a RCURL                                      {: LinkedList<nodo> tmp = new LinkedList<>();
+                                                                                   tmp.add(new CASE(e, a));
+                                                                                   RESULT = tmp;
+                                                                                :}
+        |   DEFECTO COLON LCURL A:a RCURL                                       {: LinkedList<nodo> tmp = new LinkedList<>();
+                                                                                   tmp.add(new CASE(null, a));
+                                                                                   RESULT = tmp;
+                                                                                :}
+        ;
+
+ARR_FN  ::= ID:i DOT DESCENDENTE LPAR RPAR                                      {: RESULT = new DESCENDENTE(null, i); :}
+        |   ID:o DOT ID:i DOT DESCENDENTE LPAR RPAR                             {: RESULT = new DESCENDENTE(o, i); :}
+        |   ID:i DOT ASCENDENTE LPAR RPAR                                       {: RESULT = new ASCENDENTE(null, i); :}
+        |   ID:o DOT ID:i DOT ASCENDENTE LPAR RPAR                              {: RESULT = new ASCENDENTE(o, i); :}
+        |   ID:i DOT INVERTIR LPAR RPAR                                         {: RESULT = new INVERTIR(null, i); :}
+        |   ID:o DOT ID:i DOT INVERTIR LPAR RPAR                                {: RESULT = new INVERTIR(o, i); :}
         ;
 
 l_E     ::= l_E:l COMMA E:e                                                     {: l.add(e);
@@ -140,22 +187,37 @@ E       ::= E:e1 OR E:e2                                                        
         |   E:e1 POW E:e2                                                       {: RESULT = new arm_exp(e1, e2, "^"); :}
         |   MINUS E:e1                                                          {: RESULT = new arm_exp(e1, null, "u-"); :}
         %prec UMINUS
-        |   ID:e DecInc:d                                                       {: RESULT = new aumento(e, (int)d.val); :}
+        |   ID:e PLUSPLUS                                                       {: RESULT = new aumento(e, 1); :}
+        %prec UPLUSPLUS
+        |   ID:e MINUSMINUS                                                     {: RESULT = new aumento(e, -1); :}
         %prec UPLUSPLUS
         |   ID:f DOT ID:e DecInc:d                                              {: RESULT = new Obj_aumento(f, e, (int)d.val); :}
         %prec UPLUSPLUS
-        /*|   ID:e LBRACK NUM:i RBRACK DecInc:d                                   {: RESULT = new setArr(e, i); :}
-        %prec UPLUSPLUS*/
+        |   ID:e LBRACK NUM:i RBRACK DecInc:d                                   {: RESULT = new aumento_Arr(e, Integer.parseInt(i), (int)d.val); :}
+        %prec UPLUSPLUS
+        |   ID:o DOT ID:e LBRACK NUM:i RBRACK DecInc:d                          {: RESULT = new Obj_arr_aumento(o, e, Integer.parseInt(i), (int)d.val); :}
+        %prec UPLUSPLUS
         |   NUM:e DecInc:d                                                      {: RESULT = new rel_exp(new num(e), d, "+"); :}
         %prec UPLUSPLUS
+        |   ID:e DOT MAXIMO LPAR RPAR                                           {: RESULT = new Maximo(null, e); :}
+        |   ID:o DOT ID:e DOT MAXIMO LPAR RPAR                                  {: RESULT = new Maximo(o, e); :}
+        |   ID:e DOT MINIMO LPAR RPAR                                           {: RESULT = new Minimo(null, e); :}
+        |   ID:o DOT ID:e DOT MINIMO LPAR RPAR                                  {: RESULT = new Minimo(o, e); :}
+        /*|   E:e DOT MAXIMO LPAR RPAR                                            {: RESULT = new Maximo(e); :}
+        |   E:e DOT MINIMO LPAR RPAR                                            {: RESULT = new Minimo(e); :}*/
+        |   E:c Q E:t COLON E:f                                                 {: RESULT = new inline_if(c, t, f); :}
+        |   VAL:e                                                               {: RESULT = e; :}
+        |   PRIM:e                                                              {: RESULT = e; :}
         |   ID:e                                                                {: RESULT = new getId(e); :}
         |   ID:f DOT ID:e                                                       {: RESULT = new Obj_getId(f, e); :}
         |   ID:e LBRACK NUM:i RBRACK                                            {: RESULT = new getArr(e, Integer.parseInt(i)); :}
-        |   E:c Q E:t COLON E:f                                                 {: RESULT = new inline_if(c, t, f); :}
+        |   ID:o DOT ID:e LBRACK NUM:i RBRACK                                   {: RESULT = new Obj_getArr(o, e, Integer.parseInt(i)); :}
+        |   call_f:e                                                            {: RESULT = e; :}        
         |   NUM:e                                                               {: RESULT = new num(e); :}
         |   STRING:e                                                            {: RESULT = new str(e); :}
-        |   call_f:e                                                            {: RESULT = e; :}
         |   NULO                                                                {: RESULT = new nulo(); :}
+        |   VERDADERO                                                           {: RESULT = new bool(1); :}
+        |   FALSO                                                               {: RESULT = new bool(0); :}
         |   LPAR E:e RPAR                                                       {: RESULT = e; :}
         ;
 

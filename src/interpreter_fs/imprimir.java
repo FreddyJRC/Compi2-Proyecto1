@@ -5,6 +5,8 @@
  */
 package interpreter_fs;
 
+import proyecto.IDE;
+
 /**
  *
  * @author freddy
@@ -20,7 +22,7 @@ public class imprimir extends nodo{
     @Override
     public nodo run(env ambiente) {
         nodo e = this.e.run(ambiente);
-        System.out.println(e.val);
+        IDE.consoleOut(String.valueOf(e.val));
         return this;
     }
     

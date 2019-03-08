@@ -19,7 +19,7 @@ public class display {
     private static final LinkedList<funcion> funciones = new LinkedList<>();
     
     static public void putFuncion(funcion cuerpo){
-        funciones.add(cuerpo);
+        funciones.addFirst(cuerpo);
     }
 
     static public funcion getFunction(String id, LinkedList<nodo> parametros) {
@@ -29,6 +29,11 @@ public class display {
             }
         }
         return null;
+    }
+
+    public static void clear() {
+        display.clear();
+        funciones.clear();
     }
     
 }

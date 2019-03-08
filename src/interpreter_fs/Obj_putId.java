@@ -11,21 +11,26 @@ import java.util.LinkedList;
  *
  * @author freddy
  */
-public class Obj_getId extends nodo {
-    
+public class Obj_putId extends nodo {
+
     String obj, id;
+    nodo e;
     
-    public Obj_getId(String obj, String id){
+    public Obj_putId(String obj, String id, nodo e){
         this.obj = obj;
         this.id = id;
+        this.e = e;
     }
     
     @Override
     public nodo run(env ambiente) {
+        nodo e = this.e.run(ambiente);
+        
         simbol obj = ambiente.get(this.obj);
         if(obj.tipo.equalsIgnoreCase("objeto")){
             ((LinkedList)obj.val).forEach((a) -> {
                 if(a instanceof Obj_a && ((Obj_a)a).id.equalsIgnoreCase(this.id)){
+                    ((Obj_a)a).val = e.val;
                     this.val = ((Obj_a)a).val;
                 }
             });

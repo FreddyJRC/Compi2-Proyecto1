@@ -20,9 +20,7 @@ public class getId extends nodo{
     @Override
     public nodo run(env ambiente) {
         simbol tmp = ambiente.get((String)this.id);
-        if(tmp.tipo.equalsIgnoreCase("var")){
-            this.val = tmp.val;
-        }
+        this.val = tmp.val;
         return this;
     }
     

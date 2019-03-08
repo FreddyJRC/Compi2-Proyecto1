@@ -24,8 +24,8 @@ public class Obj_a_arr extends nodo {
     @Override
     public nodo run(env ambiente) {
         if(elementos != null){
-            this.elementos.forEach((e) -> {
-                e.run(ambiente);
+            this.elementos.forEach((nodo e) -> {
+                nodo run = e.run(ambiente);
             });
         }
         

@@ -89,7 +89,7 @@ import java_cup.runtime.*;
 
     <YYINITIAL> {
         /* identifiers */ 
-        {Identifier}                                { return symbol(sym.ID); }
+        {Identifier}                                { return symbol(sym.ID, yytext()); }
 
         /* literals */
         {Number}                                    { return symbol(sym.NUM, yytext()); }

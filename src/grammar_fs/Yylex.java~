@@ -1077,7 +1077,7 @@ class Yylex implements java_cup.runtime.Scanner {
             }
           case 92: break;
           case 5: 
-            { return symbol(sym.ID, yytext());
+            { return symbol(sym.ID);
             }
           case 93: break;
           case 6: 
