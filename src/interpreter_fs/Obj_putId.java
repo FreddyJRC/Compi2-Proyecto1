@@ -27,7 +27,7 @@ public class Obj_putId extends nodo {
         nodo e = this.e.run(ambiente);
         
         simbol obj = ambiente.get(this.obj);
-        if(obj.tipo.equalsIgnoreCase("objeto")){
+        if(obj.val instanceof LinkedList){
             ((LinkedList)obj.val).forEach((a) -> {
                 if(a instanceof Obj_a && ((Obj_a)a).id.equalsIgnoreCase(this.id)){
                     ((Obj_a)a).val = e.val;

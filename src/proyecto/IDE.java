@@ -5,9 +5,12 @@
  */
 package proyecto;
 
+import grammar_fs.Yylex;
 import grammar_fs.parser;
+import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java_cup.runtime.Symbol;
 
 /**
  *
@@ -119,6 +122,17 @@ public class IDE extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         console.setText("");
         interpreter_fs.display.clear();
+        
+//        grammar_fs.Yylex reader = new Yylex(new StringReader(jTextArea1.getText()));
+//        try{
+//            Symbol s = (Symbol) reader.next_token();
+//            while(s.sym != 0){
+//                System.out.println("L: " + s.value + "\t\t T: " + s.sym);
+//                s = (Symbol) reader.next_token();
+//            }
+//        }catch(Exception e){
+//            
+//        }
         
         grammar_fs.parser p = new grammar_fs.parser(jTextArea1.getText());
         try {

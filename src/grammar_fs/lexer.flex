@@ -4,9 +4,11 @@ import java_cup.runtime.*;
       
 %%
 
+%public
 %line
 %column
 %cup
+%ignorecase             //Ignorar mayúsculas y minúsculas.
    
 %{   
     StringBuffer string = new StringBuffer();

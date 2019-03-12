@@ -25,7 +25,7 @@ public class Obj_aumento extends nodo {
     @Override
     public nodo run(env ambiente) {
         simbol obj = ambiente.get(this.obj);
-        if(obj.tipo.equalsIgnoreCase("objeto")){
+        if(obj.val instanceof LinkedList){
             ((LinkedList<Obj_a>)obj.val).forEach((a) -> {
                 if((a).id.equalsIgnoreCase(this.id)){
                     this.val = a.val;

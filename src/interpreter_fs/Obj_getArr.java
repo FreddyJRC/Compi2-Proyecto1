@@ -13,19 +13,20 @@ import java.util.LinkedList;
  */
 public class Obj_getArr extends nodo {
 
-    String objeto, id;
+    nodo obj;
+    String id;
     int i;
     
-    public Obj_getArr(String objeto, String id, int i){
-        this.objeto = objeto;
+    public Obj_getArr(nodo obj, String id, int i){
+        this.obj = obj;
         this.id = id;
         this.i = i;
     }
     
     @Override
     public nodo run(env ambiente) {
-        simbol obj = ambiente.get(this.objeto);
-        if(obj.tipo.equalsIgnoreCase("objeto")){
+        nodo obj = this.obj.run(ambiente);
+        if(obj.val instanceof LinkedList){
             ((LinkedList)obj.val).forEach((a) -> {
                 if(a instanceof Obj_a_arr && ((Obj_a_arr)a).id.equalsIgnoreCase(this.id)){
                     this.val = ((LinkedList<nodo>)((Obj_a_arr)a).val).get(i).val;
