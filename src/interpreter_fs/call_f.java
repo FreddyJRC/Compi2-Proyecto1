@@ -30,6 +30,7 @@ public class call_f extends nodo {
             nodo e = parametros.get(i).run(ambiente);
             nuevo.put(a.parametros.get(i), "var", e.val);
         }
+        
         try{
             nodo e = a.acciones.run(nuevo);
         }catch(Return r){

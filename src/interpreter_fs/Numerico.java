@@ -52,6 +52,12 @@ public class Numerico extends nodo {
             
             if(max instanceof Integer && min instanceof Integer && defecto instanceof Integer)
                 model = new SpinnerNumberModel((int) defecto, (int) min, (int) max, 1);
+            else if(max == null && min instanceof Integer && defecto instanceof Integer)
+                model = new SpinnerNumberModel((int) defecto, (int) min, null, 1);
+            else if(max instanceof Integer && min == null && defecto instanceof Integer)
+                model = new SpinnerNumberModel((int) defecto, null, (int) max, 1);
+            else if(max == null && min == null && defecto instanceof Integer)
+                model = new SpinnerNumberModel((int) defecto, null, null, 1);
                 
             JSpinner caja = new JSpinner(model);
             

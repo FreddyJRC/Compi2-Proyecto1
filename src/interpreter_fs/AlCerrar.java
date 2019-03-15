@@ -11,40 +11,37 @@ import javax.swing.JFrame;
  *
  * @author freddy
  */
-public class AlCargar extends nodo {
-    
+public class AlCerrar extends nodo {
+
     String id;
     nodo funcion;
     
-    public AlCargar(String id, nodo funcion){
-        this.id = id;
-        this.funcion = funcion;
+    public AlCerrar(String i, nodo f) {
+        this.id = i;
+        this.funcion = f;
     }
 
     @Override
     public nodo run(env ambiente) {
+        
         simbol v = ambiente.get(this.id);
         
         if(v.val instanceof JFrame){
             if(funcion == null){
-
-                java.awt.EventQueue.invokeLater(new Runnable() {
+                
+                ((JFrame) v.val).addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
-                    public void run() {
-                        if(v.start != null){
-                            if(v.start instanceof nodo){
-                                ((nodo) v.start).run(ambiente);
-                            }
-                        }
+                    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                        if(v.exit != null)
+                            if(v.exit instanceof nodo)
+                                ((nodo) v.exit).run(ambiente);
                         
-                        ((JFrame) v.val).setVisible(true);
+                        System.exit(0);
                     }
                 });
                 
             } else {
-                
-                v.start = funcion;
-                
+                v.exit = funcion;
             }
         }
         

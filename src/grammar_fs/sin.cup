@@ -26,13 +26,13 @@ scan with
 /* Terminals (tokens returned by the scanner). */
 terminal                NULO, VERDADERO, FALSO, VAR, IMPRIMIR, IMPORTAR, DETENER, SELECCIONA, CASO, DEFECTO, RETORNAR, SI, SINO, FUNCION, DESCENDENTE, ASCENDENTE, CADA, INVERTIR, MAXIMO, MINIMO, FILTRAR, BUSCAR, MAP, REDUCE, TODOS, ALGUNO, LEERGXML, OPE, OPI, OPN, CREARVENTANA, CREARCONTENEDOR, CREARTEXTO, CREARCAJA, CREARAREA, CREARNUMERICO, CREARDESPLEGABLE, CREARBOTON, CREARIMAGEN, CREARREPRODUCTOR, CREARVIDEO, ALCLIC, ALCARGAR, ALCERRAR, LCURL, RCURL, LPAR, RPAR, LBRACK, RBRACK, EQ, PLUS, MINUS, TIMES, DIV, POW, PLUSPLUS, MINUSMINUS, PLUSEQ, MINUSEQ, TIMESEQ, DIVEQ, MORETHAN, LESSTHAN, MORETHANEQ, LESSTHANEQ, EQEQ, NOTEQ, AND, OR, NOT, COLON, SEMI, COMMA, DOT, Q;
 terminal    String      NUM, ID, STRING;
-terminal                UPLUSPLUS, UMINUSMINUS, UMINUS, UNOT;
+terminal                UMINUS, UNOT;
 
 /* Non terminals */
 non terminal                S;
 non terminal    nodo        L, A, As, Func, call_f, Dec, Dec_, Asign, E;
-non terminal    nodo        Obj_a, DecInc, IF, ELSE_IF, ELSE, SWITCH, ARR_FN;
-non terminal    nodo        VAL, PRIM, WIN_FN;
+non terminal    nodo        Obj_a, IF, ELSE_IF, ELSE, SWITCH, ARR_FN;
+non terminal    nodo        WIN_FN;
 non terminal    LinkedList  l_para, l_E, l_Obj_a, CASE;
 
 /* Precedences */
@@ -82,10 +82,10 @@ call_f  ::= ID:i LPAR l_E:e RPAR                                                
         |   ID:i LPAR RPAR                                                      {: RESULT = new call_f(i, null); :}
         ;
 
-l_para  ::= l_para:l COMMA VAR ID:i                                             {: l.add(i);
+l_para  ::= l_para:l COMMA ID:i                                                 {: l.add(i);
                                                                                    RESULT = l; 
                                                                                 :}
-        |   VAR ID:i                                                            {: LinkedList<String> list = new LinkedList<>();
+        |   ID:i                                                                {: LinkedList<String> list = new LinkedList<>();
                                                                                    list.add(i);
                                                                                    RESULT = list;
                                                                                 :}
@@ -165,6 +165,7 @@ ARR_FN  ::= ID:i DOT DESCENDENTE LPAR RPAR                                      
         ;
 
 WIN_FN  ::= ID:i DOT ALCARGAR LPAR RPAR                                         {: RESULT = new AlCargar(i, null); :}
+        |   ID:i DOT ALCARGAR LPAR call_f:f RPAR                                {: RESULT = new AlCargar(i, f); :}
         |   ID:i DOT CREARTEXTO LPAR E:f COMMA E:t COMMA E:c COMMA E:x COMMA E:y COMMA E:n COMMA E:cur COMMA E:v RPAR
                                                                                 {: RESULT = new Texto(i, f, t, c, x, y, n, cur, v); :}
         |   ID:i DOT CREARCAJA LPAR E:h COMMA E:w COMMA E:f COMMA E:t COMMA E:c COMMA E:x COMMA E:y COMMA E:n COMMA E:cur COMMA E:d COMMA E:name RPAR
@@ -177,6 +178,9 @@ WIN_FN  ::= ID:i DOT ALCARGAR LPAR RPAR                                         
                                                                                 {: RESULT = new Desplegable(i, h, w, l, x, y, d, n); :}
         |   ID:i DOT CREARIMAGEN LPAR E:r COMMA E:x COMMA E:y COMMA E:h COMMA E:w RPAR
                                                                                 {: RESULT = new Imagen(i, r, x, y, h, w); :}
+        |   ID:i DOT ALCLIC LPAR call_f:f RPAR                                  {: RESULT = new AlClic(i, f); :}
+        |   ID:i DOT ALCERRAR LPAR RPAR                                         {: RESULT = new AlCerrar(i, null); :}
+        |   ID:i DOT ALCERRAR LPAR call_f:f RPAR                                {: RESULT = new AlCerrar(i, f); :}
         ;
 
 l_E     ::= l_E:l COMMA E:e                                                     {: l.add(e);

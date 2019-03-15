@@ -3,13 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/freddy/Documents/U/2019/1S/Compi2/Compi2-Proyecto1/src/interpreter_fs/AlCargar.java</file>
-            <file>file:/home/freddy/Documents/U/2019/1S/Compi2/Compi2-Proyecto1/src/grammar_fs/lexer.flex</file>
-            <file>file:/home/freddy/Documents/U/2019/1S/Compi2/Compi2-Proyecto1/src/grammar_fs/sin.cup</file>
-            <file>file:/home/freddy/Documents/U/2019/1S/Compi2/Compi2-Proyecto1/src/interpreter_fs/Ventana.java</file>
-            <file>file:/home/freddy/Documents/U/2019/1S/Compi2/Compi2-Proyecto1/src/grammar_fs/parser.java</file>
-            <file>file:/home/freddy/Documents/U/2019/1S/Compi2/Compi2-Proyecto1/src/interpreter_fs/Todos.java</file>
-            <file>file:/home/freddy/Documents/U/2019/1S/Compi2/Compi2-Proyecto1/src/interpreter_fs/Alguno.java</file>
+            <file>file:/home/freddy/Documents/U/2019/1S/Compi2/Compi2-Proyecto1/src/interpreter_gxml/call_f.java</file>
+            <file>file:/home/freddy/Documents/U/2019/1S/Compi2/Compi2-Proyecto1/src/grammar_gxml/parser.java</file>
+            <file>file:/home/freddy/Documents/U/2019/1S/Compi2/Compi2-Proyecto1/src/grammar_gxml/sin.cup</file>
         </group>
     </open-files>
 </project-private>

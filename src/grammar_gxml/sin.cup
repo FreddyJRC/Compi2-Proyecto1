@@ -1,1 +1,197 @@
+package grammar_gxml;
+import interpreter_gxml.*;
+import java_cup.runtime.*;
+import java.io.*;
+import java.util.LinkedList;
+
+parser code
+{:
+    private Yylex lexer;
+    private File file;
+    
+    public parser( String in ) {
+        this();
+        
+        lexer = new Yylex( new StringReader( in ) );
+    }
+
+    public nodo root;
+:};
+
+scan with
+{:
+    return lexer.next_token();
+:};
+
+terminal                OPENTAG, CLOSETAG, SLASH, IMPORTAR, VENTANA, CONTENEDOR, TEXTO, CONTROL, LISTADATOS, DATO, DEFECTO, MULTIMEDIA, BOTON, ENVIAR, TIPO, COLOR, ACCIONINICIAL, ACCIONFINAL, X, Y, ALTO, ANCHO, BORDE, NOMBRE, FUENTE, TAM, NEGRITA, CURSIVA, MAXIMO, MINIMO, PATH, AUTO_REPRODUCCION, REFERENCIA, ACCION, NUMERICO, TEXTOAREA, DESPLEGABLE, MUSICA, VIDEO, IMAGEN, PRINCIPAL, SECUNDARIA, VERDADERO, FALSO, DQ, EQ, LCURL, RCURL, LPAR, RPAR, LBRACK, RBRACK, PLUSPLUS, MINUSMINUS, PLUSEQ, MINUSEQ, TIMESEQ, DIVEQ, PLUS, MINUS, TIMES, DIV, POW, MORETHANEQ, LESSTHANEQ, EQEQ, NOTEQ, MORETHAN, LESSTHAN, AND, OR, NOT, COMMA, DOT, Q, ID;
+terminal    String      NUM, ID_L, STRING, CONTENIDO, HEX, STRINGLIT;
+terminal                NULO, UNOT, UMINUS;
+
+non terminal            S;
+non terminal    nodo    L, CONT, CTRL, CNT, AT, call_f, E;
+non terminal LinkedList XML, IMPORTS, ATTR, CONTENEDORES, CONTROLES, DATOS, DT, l_E;
+non terminal   String   DEF;
+
+precedence left Q;
+precedence left OR;
+precedence left AND;
+precedence right UNOT;
+precedence left EQEQ, NOTEQ;
+precedence left MORETHAN, LESSTHAN, MORETHANEQ, LESSTHANEQ;
+precedence left PLUS, MINUS;
+precedence left TIMES, DIV;
+precedence left POW;
+precedence left PLUSPLUS, MINUSMINUS;
+precedence right UMINUS;
+precedence left DOT;
+
+S           ::= L:l                                                             {: parser.root = l; :}
+            ;
+
+L           ::= IMPORTS:i XML:x                                                 {: RESULT = new Head(i, x); :}
+            |   XML:x                                                           {: RESULT = new Head(null, x); :}
+            ;
+
+IMPORTS     ::= IMPORTS:i OPENTAG IMPORTAR CLOSETAG CONTENIDO:c OPENTAG SLASH IMPORTAR CLOSETAG
+                                                                                {: i.add(c);
+                                                                                   RESULT = i; :}
+            |   OPENTAG IMPORTAR CLOSETAG CONTENIDO:c OPENTAG SLASH IMPORTAR CLOSETAG
+                                                                                {: LinkedList<String> list = new LinkedList<>();
+                                                                                   list.add(c);
+                                                                                   RESULT = list;
+                                                                                :}
+            ;
+
+XML         ::= XML:x OPENTAG VENTANA ATTR:a CLOSETAG CONTENEDORES:c OPENTAG SLASH VENTANA CLOSETAG
+                                                                                {: x.add(new Ventana(a, c)); 
+                                                                                   RESULT = x; :}
+            |   OPENTAG VENTANA ATTR:a CLOSETAG CONTENEDORES:c OPENTAG SLASH VENTANA CLOSETAG
+                                                                                {: LinkedList<nodo> list = new LinkedList<>();
+                                                                                   list.add(new Ventana(a, c));
+                                                                                   RESULT = list;
+                                                                                :}
+            ;
+
+CONTENEDORES::= CONTENEDORES:s CONT:c                                           {: s.add(c);
+                                                                                   RESULT = s; :}
+            |   CONT:c                                                          {: LinkedList<nodo> list = new LinkedList<>();
+                                                                                   list.add(c);
+                                                                                   RESULT = list;
+                                                                                :}
+            ;
+
+CONT        ::= OPENTAG CONTENEDOR ATTR:a CLOSETAG CONTROLES:c OPENTAG SLASH CONTENEDOR CLOSETAG
+                                                                                {: RESULT = new Contenedor(a, c); :}
+            ;
+
+CONTROLES   ::= CONTROLES:s CTRL:c                                              {: s.add(c);
+                                                                                   RESULT = s; :}
+            |   CTRL:c                                                          {: LinkedList<nodo> list = new LinkedList<>();
+                                                                                   list.add(c);
+                                                                                   RESULT = list;
+                                                                                :}
+            ;
+
+CTRL        ::= OPENTAG TEXTO ATTR:a CLOSETAG CONTENIDO:c OPENTAG SLASH TEXTO CLOSETAG
+                                                                                {: RESULT = new Texto(a, c); :}
+            |   OPENTAG CONTROL ATTR:a CLOSETAG DEF:d OPENTAG SLASH CONTROL CLOSETAG
+                                                                                {: RESULT = new Control(a, d, null); :}
+            |   OPENTAG CONTROL ATTR:a CLOSETAG DATOS:l OPENTAG SLASH CONTROL CLOSETAG
+                                                                                {: RESULT = new Control(a, null, l); :}
+            |   OPENTAG CONTROL ATTR:a CLOSETAG DATOS:l DEF:d OPENTAG SLASH CONTROL CLOSETAG
+                                                                                {: RESULT = new Control(a, d, null); :}
+            ;
+
+DEF         ::= OPENTAG DEFECTO CLOSETAG CONTENIDO:d OPENTAG SLASH DEFECTO CLOSETAG
+                                                                                {: RESULT = d; :}
+            ;
+
+DATOS       ::= OPENTAG LISTADATOS CLOSETAG DT:d OPENTAG SLASH LISTADATOS CLOSETAG {: RESULT = d; :}
+            ;
+
+DT          ::= DT:l OPENTAG DATO CLOSETAG CONTENIDO:d OPENTAG SLASH DATO CLOSETAG 
+                                                                                {: l.add(d); 
+                                                                                   RESULT = l; :}
+            |   OPENTAG DATO CLOSETAG CONTENIDO:d OPENTAG SLASH DATO CLOSETAG   {: LinkedList<String> list = new LinkedList<>();
+                                                                                   list.add(d);
+                                                                                   RESULT = list; :}
+            ;
+
+ATTR        ::= ATTR:t AT:a                                                     {: t.add(a);
+                                                                                   RESULT = t; :}
+            |   AT:a                                                            {: LinkedList<nodo> list = new LinkedList<>();
+                                                                                   list.add(a);
+                                                                                   RESULT = list; :}
+            ;
+
+AT          ::= ID EQ STRINGLIT:i                                               {: RESULT = new Atributo("id", i); :}
+            |   TIPO EQ STRINGLIT:i                                             {: RESULT = new Atributo("tipo", i); :}
+            |   COLOR EQ DQ HEX:i DQ                                            {: RESULT = new Atributo("color", i); :}
+            |   X EQ NUM:i                                                      {: RESULT = new Atributo("x", i); :}
+            |   Y EQ NUM:i                                                      {: RESULT = new Atributo("y", i); :}
+            |   ALTO EQ NUM:i                                                   {: RESULT = new Atributo("alto", i); :}
+            |   ANCHO EQ NUM:i                                                  {: RESULT = new Atributo("ancho", i); :}
+            |   NOMBRE EQ STRINGLIT:i                                           {: RESULT = new Atributo("nombre", i); :}
+            |   FUENTE EQ STRINGLIT:i                                           {: RESULT = new Atributo("fuente", i); :}
+            |   TAM EQ EQ NUM:i                                                 {: RESULT = new Atributo("tam", i); :}
+            |   MAXIMO EQ NUM:i                                                 {: RESULT = new Atributo("max", i); :}
+            |   MINIMO EQ NUM:i                                                 {: RESULT = new Atributo("min", i); :}
+            |   REFERENCIA EQ STRINGLIT:i                                       {: RESULT = new Atributo("ref", i); :}
+            |   PATH EQ STRINGLIT:i                                             {: RESULT = new Atributo("path", i); :}
+            |   BORDE EQ DQ VERDADERO DQ                                        {: RESULT = new Atributo("borde", true); :}
+            |   BORDE EQ DQ FALSO DQ                                            {: RESULT = new Atributo("borde", false); :}
+            |   NEGRITA EQ DQ VERDADERO DQ                                      {: RESULT = new Atributo("negrita", true); :}
+            |   NEGRITA EQ DQ FALSO DQ                                          {: RESULT = new Atributo("negrita", false); :}
+            |   CURSIVA EQ DQ VERDADERO DQ                                      {: RESULT = new Atributo("cursiva", true); :}
+            |   CURSIVA EQ DQ FALSO DQ                                          {: RESULT = new Atributo("cursiva", false); :}
+            |   AUTO_REPRODUCCION EQ DQ VERDADERO DQ                            {: RESULT = new Atributo("auto", true); :}
+            |   AUTO_REPRODUCCION EQ DQ FALSO DQ                                {: RESULT = new Atributo("auto", false); :}
+            |   ACCIONINICIAL EQ LCURL call_f:i RCURL                           {: RESULT = new Atributo("inicial", i); :}
+            |   ACCIONFINAL EQ LCURL call_f:i RCURL                             {: RESULT = new Atributo("final", i); :}
+            |   ACCION EQ LCURL call_f:i RCURL                                  {: RESULT = new Atributo("accion", i); :}
+            ;
+
+call_f      ::= ID_L:i LPAR l_E:e RPAR                                            {: RESULT = new call_f(i, e); :}
+            |   ID_L:i LPAR RPAR                                                  {: RESULT = new call_f(i, null); :}
+            ;
+
+l_E     ::= l_E:l COMMA E:e                                                     {: l.add(e);
+                                                                                   RESULT = l; :}
+        |   E:e                                                                 {: LinkedList<nodo> list = new LinkedList<>();
+                                                                                   list.add(e);
+                                                                                   RESULT = list; :}
+        ;
+
+E       ::= E:e1 OR E:e2                                                        {: RESULT = new log_exp(e1, e2, "||"); :}
+        |   E:e1 AND E:e2                                                       {: RESULT = new log_exp(e1, e2, "&&"); :}
+        |   NOT E:e1                                                            {: RESULT = new log_exp(e1, null, "!"); :}
+        %prec UNOT
+        |   E:e1 MORETHAN E:e2                                                  {: RESULT = new rel_exp(e1, e2, ">"); :}
+        |   E:e1 LESSTHAN E:e2                                                  {: RESULT = new rel_exp(e1, e2, "<"); :}
+        |   E:e1 MORETHANEQ E:e2                                                {: RESULT = new rel_exp(e1, e2, ">="); :}
+        |   E:e1 LESSTHANEQ E:e2                                                {: RESULT = new rel_exp(e1, e2, "<="); :}
+        |   E:e1 EQEQ E:e2                                                      {: RESULT = new rel_exp(e1, e2, "=="); :}
+        |   E:e1 NOTEQ E:e2                                                     {: RESULT = new rel_exp(e1, e2, "!="); :}
+        |   E:e1 PLUS E:e2                                                      {: RESULT = new arm_exp(e1, e2, "+"); :}
+        |   E:e1 MINUS E:e2                                                     {: RESULT = new arm_exp(e1, e2, "-"); :}
+        |   E:e1 TIMES E:e2                                                     {: RESULT = new arm_exp(e1, e2, "*"); :}
+        |   E:e1 DIV E:e2                                                       {: RESULT = new arm_exp(e1, e2, "/"); :}
+        |   E:e1 POW E:e2                                                       {: RESULT = new arm_exp(e1, e2, "^"); :}
+        |   MINUS E:e1                                                          {: RESULT = new arm_exp(e1, null, "-"); :}
+        %prec UMINUS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        |   E:e PLUSPLUS                                                        {: RESULT = new aumento(e, 1); :}
+        |   E:e MINUSMINUS                                                      {: RESULT = new aumento(e, -1); :}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        |   ID_L:e                                                              {: RESULT = new getId(e); :}
+        |   E:e DOT ID_L:i                                                      {: RESULT = new Obj_getId(e, i); :}
+        |   ID_L:e LBRACK NUM:i RBRACK                                          {: RESULT = new getArr(e, Integer.parseInt(i)); :}
+        |   E:e DOT ID_L:i LBRACK NUM:n RBRACK                                  {: RESULT = new Obj_getArr(e, i, Integer.parseInt(n)); :}        
+        |   NUM:e                                                               {: RESULT = new num(e); :}
+        |   STRING:e                                                            {: RESULT = new str(e); :}
+        |   NULO                                                                {: RESULT = new nulo(); :}
+        |   VERDADERO                                                           {: RESULT = new bool(1); :}
+        |   FALSO                                                               {: RESULT = new bool(0); :}
+        |   LPAR E:e RPAR                                                       {: RESULT = e; :}
+        ;
 

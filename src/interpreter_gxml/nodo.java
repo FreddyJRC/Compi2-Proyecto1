@@ -3,19 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package interpreter_fs;
+package interpreter_gxml;
 
 /**
  *
  * @author freddy
  */
-class simbol {
-    String tipo;
+public abstract class nodo {
     Object val;
-    public Object start, exit;
-    
-    public simbol(String tipo, Object val){
-        this.tipo = tipo;
-        this.val = val;
-    }
+    public abstract nodo run();
 }

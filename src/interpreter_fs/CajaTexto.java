@@ -5,6 +5,7 @@
  */
 package interpreter_fs;
 
+import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -77,6 +78,9 @@ public class CajaTexto extends nodo {
             
             if(nombre instanceof String)
                 caja.setName((String) nombre);
+            
+            if(color instanceof String)
+                caja.setForeground(Color.decode((String) color));
       
             ((JPanel) panel).add(caja);
             
