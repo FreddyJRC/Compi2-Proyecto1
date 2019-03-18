@@ -3,21 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package interpreter_gxml;
+package proyecto;
 
 /**
  *
  * @author freddy
  */
-public class nulo extends nodo {
-
-    public nulo(){
-        this.val = "nulo";
+public class display {
+    
+    public static String home;
+    
+    public void setHome(String home){
+        display.home = home;
     }
     
-    @Override
-    public nodo run() {
-        return this;
+    public String getHome(){
+        return display.home;
     }
     
 }

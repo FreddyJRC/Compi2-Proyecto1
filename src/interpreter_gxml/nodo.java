@@ -10,6 +10,8 @@ package interpreter_gxml;
  * @author freddy
  */
 public abstract class nodo {
-    Object val;
+    public Object val;
+    String padre;
+    String ColorVentana;
     public abstract nodo run();
 }

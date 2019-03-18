@@ -93,15 +93,15 @@ public class arm_exp extends nodo {
                 case "/":
                     if(e1 instanceof Integer){
                         if(e2 instanceof Integer){
-                            this.val = (double)e1 * (double)e2;
+                            this.val = ((int)e1 / (int)e2);
                         }else if(e2 instanceof Double){
-                            this.val = (double)((int)e1 * (double)e2);
+                            this.val = (double)((int)e1 / (double)e2);
                         }
                     }else if(e1 instanceof Double){
                         if(e2 instanceof Integer){
-                            this.val = (double)((double)e1 * (int)e2);
+                            this.val = (double)((double)e1 / (int)e2);
                         }else if(e2 instanceof Double){
-                            this.val = (double)((double)e1 * (double)e2);
+                            this.val = (double)((double)e1 / (double)e2);
                         }
                     }
                     break;

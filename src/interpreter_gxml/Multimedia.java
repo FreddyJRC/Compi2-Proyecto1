@@ -5,18 +5,24 @@
  */
 package interpreter_gxml;
 
+import java.util.HashMap;
+
 /**
  *
  * @author freddy
  */
-public class nulo extends nodo {
+public class Multimedia extends nodo {
 
-    public nulo(){
-        this.val = "nulo";
-    }
+    HashMap attrs;
     
+    public Multimedia(HashMap a) {
+        attrs = a;
+    }
+
     @Override
     public nodo run() {
+        this.val = "";
+        
         return this;
     }
     

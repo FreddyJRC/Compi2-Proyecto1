@@ -60,7 +60,7 @@ public class Imagen extends nodo {
                 img.setLocation((int) x, (int) y);
             
             if(alto instanceof Integer && ancho instanceof Integer)
-                img.setSize((int) alto, (int) ancho);
+                img.setSize((int) ancho, (int) alto);
             
             ((JPanel) panel).add(img);
             

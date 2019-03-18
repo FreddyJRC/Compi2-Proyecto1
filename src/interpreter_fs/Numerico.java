@@ -62,7 +62,7 @@ public class Numerico extends nodo {
             JSpinner caja = new JSpinner(model);
             
             if(alto instanceof Integer && ancho instanceof Integer)
-                caja.setSize((int) alto, (int) ancho);
+                caja.setSize((int) ancho, (int) alto);
             
             if(x instanceof Integer && y instanceof Integer)
                 caja.setLocation((int) x, (int) y);

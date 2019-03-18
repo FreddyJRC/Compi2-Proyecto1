@@ -27,13 +27,11 @@ import java_cup.runtime.*;
     WhiteSpace     = {LineTerminator} | [ \t\f]
 
     /* comments */
-    Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
+    Comment = {TraditionalComment} | {EndOfLineComment}
 
     TraditionalComment   = "#$" [^$] ~"$#" | "#$" "$"+ "#"
     // Comment can be the last line of the file, without line terminator.
     EndOfLineComment     = "##" {InputCharacter}* {LineTerminator}?
-    DocumentationComment = "#$$" {CommentContent} "$"+ "#"
-    CommentContent       = ( [^$] | \* + [^$#] )*
 
 
     Identifier = ([:jletter:] | "_") ([:jletterdigit:] | "_")*
@@ -45,18 +43,23 @@ import java_cup.runtime.*;
     SChar = [^\"\\\n\r] | {EscChar}
     EscChar = \\[ntbrf\\\'\"]
 
-    Contenido = [^<\r\n]+
+    Contenido = [^("#"+)<\r\n]+
 
 %state STRING
 %state TAG
 %state F_CALL
-%state CONTENIDO
 
 %%
 
 <YYINITIAL>{
         "<"                                         { yybegin(TAG); return symbol(sym.OPENTAG); }
+
+        {Comment}                                   { /* ignore */ }
+        {WhiteSpace}+                               { /* ignore */ }
+
         {Contenido}                                 { return symbol(sym.CONTENIDO, yytext()); }
+
+        
     }
 
 <TAG>{
@@ -114,10 +117,11 @@ import java_cup.runtime.*;
         "="                                         { return symbol(sym.EQ); }
         "{"                                         { yybegin(F_CALL); return symbol(sym.LCURL); }
 
-        {Identifier}                                { return symbol(sym.ID_L, yytext()); }
         {Number}                                    { return symbol(sym.NUM, yytext()); }
-        {Hex}                                       { return symbol(sym.HEX, yytext()); }
+        \"{Hex}\"                                   { return symbol(sym.HEX, yytext()); }
         \"{SChar}*\"                                { return symbol(sym.STRINGLIT, yytext()); }
+
+        {WhiteSpace}                                { /* ignore */ }
     }
 
 <F_CALL>{
@@ -165,6 +169,8 @@ import java_cup.runtime.*;
         ","                                         { return symbol(sym.COMMA); }
         "."                                         { return symbol(sym.DOT); }
         "?"                                         { return symbol(sym.Q); }
+
+        {WhiteSpace}                                { /* ignore */ }
     }
 
 <STRING> {
@@ -179,3 +185,7 @@ import java_cup.runtime.*;
         \\\"                           { string.append('\"'); }
         \\                             { string.append('\\'); }
     }
+
+/* error fallback */
+    [^]                              { throw new Error("Illegal character <"+
+                                                        yytext()+">"); }

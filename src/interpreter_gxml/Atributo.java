@@ -9,15 +9,14 @@ package interpreter_gxml;
  *
  * @author freddy
  */
-public class nulo extends nodo {
+public class Atributo {
 
-    public nulo(){
-        this.val = "nulo";
-    }
+    public String nombre;
+    public Object valor;
     
-    @Override
-    public nodo run() {
-        return this;
+    public Atributo(String accion, Object i) {
+        this.nombre = accion;
+        this.valor = i;
     }
     
 }

@@ -5,11 +5,10 @@
  */
 package interpreter_fs;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
 import javax.swing.JFrame;
-import javax.swing.SpringLayout;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  *
@@ -17,10 +16,9 @@ import javax.swing.SpringLayout;
  */
 public class Ventana extends nodo {
     
-    String id;
-    nodo  color, ancho, alto;
+    nodo id, color, ancho, alto;
     
-    public Ventana(nodo color, nodo ancho, nodo alto, String id){
+    public Ventana(nodo color, nodo ancho, nodo alto, nodo id){
         this.color = color;
         this.ancho = ancho;
         this.alto = alto;
@@ -29,7 +27,9 @@ public class Ventana extends nodo {
 
     @Override
     public nodo run(env ambiente) {
+        String id = this.id.run(ambiente).val.toString();
         JFrame ventana = new JFrame(id);
+        
         nodo c = this.color.run(ambiente);
         if(c.val instanceof String)
             ventana.getContentPane().setBackground(Color.decode((String) c.val));
@@ -39,8 +39,9 @@ public class Ventana extends nodo {
         nodo e1 = this.alto.run(ambiente);
         nodo e2 = this.ancho.run(ambiente);
         ventana.setSize(
-                (e1.val instanceof Integer)? (int) e1.val : 10,
-                (e2.val instanceof Integer)? (int) e2.val : 10);
+                (e2.val instanceof Integer)? (int) e2.val : 10,
+                (e1.val instanceof Integer)? (int) e1.val : 10);
+        
         ventana.getContentPane().setLayout(null);
         this.val = ventana;
 

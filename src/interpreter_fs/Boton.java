@@ -51,7 +51,7 @@ public class Boton extends nodo {
             Object ancho = this.ancho.run(ambiente).val;
             
             if(valor instanceof String)
-                btn.setText((String) val);
+                btn.setText((String) valor);
             
             if(fuente instanceof String && tamano instanceof Integer)
                 btn.setFont(new Font((String) fuente, 0, (int) tamano));
@@ -60,7 +60,7 @@ public class Boton extends nodo {
                 btn.setLocation((int) x, (int) y);
             
             if(alto instanceof Integer && ancho instanceof Integer)
-                btn.setSize((int) alto, (int) ancho);
+                btn.setSize((int) ancho, (int) alto);
             else
                 btn.setSize(btn.getPreferredSize());
             

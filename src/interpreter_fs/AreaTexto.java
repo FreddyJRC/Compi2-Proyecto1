@@ -53,7 +53,7 @@ public class AreaTexto extends nodo{
             Object nombre = this.nombre.run(ambiente).val;
             
             if(alto instanceof Integer && ancho instanceof Integer)
-                caja.setSize((int) alto, (int) ancho);
+                caja.setSize((int) ancho, (int) alto);
             
             if(fuente instanceof String && tamano instanceof Integer && negrita instanceof Boolean && cursiva instanceof Boolean){
                 if((boolean) negrita && (boolean) cursiva)

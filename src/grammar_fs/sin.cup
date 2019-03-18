@@ -15,6 +15,23 @@ parser code
         lexer = new Yylex( new StringReader( in ) );
     }
 
+    //Metodo al que se llama automaticamente ante algún error sintáctico
+    public void syntax_error(Symbol s)
+    {        
+        System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+        //Esemanticos e = new Esemanticos(String.valueOf(s.value),"Sintactico", s.left + 1, s.right, "No se esperaba ese valor");
+        //ErroresSintacticos.add(e);
+    }
+ 
+
+    //Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
+    {        
+        System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
+        //Esemanticos e = new Esemanticos(String.valueOf(s.value),"Sintactico", s.left + 1, s.right, "No se esperaba ese valor");
+        //ErroresSintacticos.add(e);
+    }
+
     public nodo root;
 :};
 
@@ -33,7 +50,7 @@ non terminal                S;
 non terminal    nodo        L, A, As, Func, call_f, Dec, Dec_, Asign, E;
 non terminal    nodo        Obj_a, IF, ELSE_IF, ELSE, SWITCH, ARR_FN;
 non terminal    nodo        WIN_FN;
-non terminal    LinkedList  l_para, l_E, l_Obj_a, CASE;
+non terminal    LinkedList  l_para, l_para2, l_E, l_Obj_a, CASE;
 
 /* Precedences */
 precedence left Q;
@@ -64,6 +81,7 @@ A       ::= A:a As:as                                                           
 As      ::= Dec:d SEMI                                                          {: RESULT = d; :}
         |   Asign:a SEMI                                                        {: RESULT = a; :}
         |   IMPRIMIR LPAR E:e RPAR SEMI                                         {: RESULT = new imprimir(e); :}
+        |   IMPORTAR LPAR E:e RPAR SEMI                                         {: RESULT = new importar(e); :}
         |   DETENER SEMI                                                        {: RESULT = new detener(); :}
         |   RETORNAR E:e SEMI                                                   {: RESULT = new retornar(e); :}
         |   Func:f                                                              {: RESULT = f; :}
@@ -75,6 +93,7 @@ As      ::= Dec:d SEMI                                                          
         ;
 
 Func    ::= FUNCION ID:i LPAR l_para:l RPAR LCURL A:a RCURL                     {: RESULT = new Func(i, l, a); :}
+        |   FUNCION ID:i LPAR l_para2:l RPAR LCURL A:a RCURL                    {: RESULT = new Func(i, l, a); :}
         |   FUNCION ID:i LPAR RPAR LCURL A:a RCURL                              {: RESULT = new Func(i, null, a); :}
         ;
 
@@ -86,6 +105,15 @@ l_para  ::= l_para:l COMMA ID:i                                                 
                                                                                    RESULT = l; 
                                                                                 :}
         |   ID:i                                                                {: LinkedList<String> list = new LinkedList<>();
+                                                                                   list.add(i);
+                                                                                   RESULT = list;
+                                                                                :}
+        ;
+
+l_para2 ::= l_para2:l COMMA VAR ID:i                                             {: l.add(i);
+                                                                                   RESULT = l; 
+                                                                                :}
+        |   VAR ID:i                                                            {: LinkedList<String> list = new LinkedList<>();
                                                                                    list.add(i);
                                                                                    RESULT = list;
                                                                                 :}
@@ -224,7 +252,7 @@ E       ::= E:e1 OR E:e2                                                        
         |   E:e DOT ALGUNO LPAR ID:i RPAR                                       {: RESULT = new Alguno(e, i); :}
         |   E:c Q E:t COLON E:f                                                 {: RESULT = new inline_if(c, t, f); :}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        |   CREARVENTANA LPAR E:c COMMA E:h COMMA E:w COMMA ID:i RPAR           {: RESULT = new Ventana(c, h, w, i); :}
+        |   CREARVENTANA LPAR E:c COMMA E:h COMMA E:w COMMA E:i RPAR            {: RESULT = new Ventana(c, h, w, i); :}
         |   ID:i DOT CREARCONTENEDOR LPAR E:h COMMA E:w COMMA E:c COMMA E:b COMMA E:x COMMA E:y RPAR
                                                                                 {: RESULT = new Panel(i, h, w, c, b, x, y); :}
         |   ID:i DOT CREARBOTON LPAR E:f COMMA E:t COMMA E:c COMMA E:x COMMA E:y COMMA E:r COMMA E:v COMMA E:h COMMA E:w RPAR

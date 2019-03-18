@@ -5,6 +5,7 @@
  */
 package interpreter_fs;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -50,11 +51,17 @@ public class Desplegable extends nodo {
                 for (int i = 0; i < ((LinkedList) lista).size(); i++) {
                     list[i] = ((nodo) ((LinkedList) lista).get(i)).val.toString();
                 }
-                caja = new JComboBox(((LinkedList) lista).toArray(list));
+                
+                ArrayList<String> tmp = new ArrayList<>();
+                ((LinkedList<nodo>) lista).forEach((i) -> {
+                    tmp.add(i.val.toString());
+                });
+                
+                caja = new JComboBox(tmp.toArray());
             }
             
             if(alto instanceof Integer && ancho instanceof Integer)
-                caja.setSize((int) alto, (int) ancho);
+                caja.setSize((int) ancho, (int) alto);
             
             if(x instanceof Integer && y instanceof Integer)
                 caja.setLocation((int) x, (int) y);

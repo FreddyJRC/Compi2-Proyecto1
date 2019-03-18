@@ -3,6 +3,7 @@ import interpreter_gxml.*;
 import java_cup.runtime.*;
 import java.io.*;
 import java.util.LinkedList;
+import java.util.HashMap;
 
 parser code
 {:
@@ -13,6 +14,23 @@ parser code
         this();
         
         lexer = new Yylex( new StringReader( in ) );
+    }
+
+    //Metodo al que se llama automaticamente ante algún error sintáctico
+    public void syntax_error(Symbol s)
+    {        
+        System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+        //Esemanticos e = new Esemanticos(String.valueOf(s.value),"Sintactico", s.left + 1, s.right, "No se esperaba ese valor");
+        //ErroresSintacticos.add(e);
+    }
+ 
+
+    //Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
+    {        
+        System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
+        //Esemanticos e = new Esemanticos(String.valueOf(s.value),"Sintactico", s.left + 1, s.right, "No se esperaba ese valor");
+        //ErroresSintacticos.add(e);
     }
 
     public nodo root;
@@ -28,8 +46,10 @@ terminal    String      NUM, ID_L, STRING, CONTENIDO, HEX, STRINGLIT;
 terminal                NULO, UNOT, UMINUS;
 
 non terminal            S;
-non terminal    nodo    L, CONT, CTRL, CNT, AT, call_f, E;
-non terminal LinkedList XML, IMPORTS, ATTR, CONTENEDORES, CONTROLES, DATOS, DT, l_E;
+non terminal    nodo    L, CONT, CTRL, CNT, call_f, E;
+non terminal  Atributo  AT;
+non terminal  HashMap   ATTR;
+non terminal LinkedList XML, IMPORTS, CONTENEDORES, CONTROLES, DATOS, DT, l_E;
 non terminal   String   DEF;
 
 precedence left Q;
@@ -94,12 +114,24 @@ CONTROLES   ::= CONTROLES:s CTRL:c                                              
 
 CTRL        ::= OPENTAG TEXTO ATTR:a CLOSETAG CONTENIDO:c OPENTAG SLASH TEXTO CLOSETAG
                                                                                 {: RESULT = new Texto(a, c); :}
+            |   OPENTAG CONTROL ATTR:a CLOSETAG OPENTAG SLASH CONTROL CLOSETAG
+                                                                                {: RESULT = new Control(a, null, null); :}
             |   OPENTAG CONTROL ATTR:a CLOSETAG DEF:d OPENTAG SLASH CONTROL CLOSETAG
                                                                                 {: RESULT = new Control(a, d, null); :}
             |   OPENTAG CONTROL ATTR:a CLOSETAG DATOS:l OPENTAG SLASH CONTROL CLOSETAG
                                                                                 {: RESULT = new Control(a, null, l); :}
             |   OPENTAG CONTROL ATTR:a CLOSETAG DATOS:l DEF:d OPENTAG SLASH CONTROL CLOSETAG
-                                                                                {: RESULT = new Control(a, d, null); :}
+                                                                                {: RESULT = new Control(a, d, l); :}
+            |   OPENTAG BOTON ATTR:a CLOSETAG CONTENIDO:c OPENTAG SLASH BOTON CLOSETAG
+                                                                                {: RESULT = new Boton(a, c); :}
+            |   OPENTAG BOTON ATTR:a CLOSETAG OPENTAG TEXTO ATTR CLOSETAG CONTENIDO:c OPENTAG SLASH TEXTO CLOSETAG OPENTAG SLASH BOTON CLOSETAG
+                                                                                {: RESULT = new Boton(a, c); :}
+            |   OPENTAG ENVIAR ATTR:a CLOSETAG CONTENIDO:c OPENTAG SLASH ENVIAR CLOSETAG
+                                                                                {: RESULT = new Enviar(a, c); :}
+            |   OPENTAG ENVIAR ATTR:a CLOSETAG OPENTAG TEXTO ATTR CLOSETAG CONTENIDO:c OPENTAG SLASH TEXTO CLOSETAG OPENTAG SLASH ENVIAR CLOSETAG
+                                                                                {: RESULT = new Enviar(a, c); :}
+            |   OPENTAG MULTIMEDIA ATTR:a CLOSETAG OPENTAG SLASH MULTIMEDIA CLOSETAG
+                                                                                {: RESULT = new Multimedia(a); :}
             ;
 
 DEF         ::= OPENTAG DEFECTO CLOSETAG CONTENIDO:d OPENTAG SLASH DEFECTO CLOSETAG
@@ -117,38 +149,38 @@ DT          ::= DT:l OPENTAG DATO CLOSETAG CONTENIDO:d OPENTAG SLASH DATO CLOSET
                                                                                    RESULT = list; :}
             ;
 
-ATTR        ::= ATTR:t AT:a                                                     {: t.add(a);
+ATTR        ::= ATTR:t AT:a                                                     {: t.put(a.nombre, a.valor);
                                                                                    RESULT = t; :}
-            |   AT:a                                                            {: LinkedList<nodo> list = new LinkedList<>();
-                                                                                   list.add(a);
+            |   AT:a                                                            {: HashMap<String, Object> list = new HashMap<>();
+                                                                                   list.put(a.nombre, a.valor);
                                                                                    RESULT = list; :}
             ;
 
 AT          ::= ID EQ STRINGLIT:i                                               {: RESULT = new Atributo("id", i); :}
             |   TIPO EQ STRINGLIT:i                                             {: RESULT = new Atributo("tipo", i); :}
-            |   COLOR EQ DQ HEX:i DQ                                            {: RESULT = new Atributo("color", i); :}
+            |   COLOR EQ HEX:i                                                  {: RESULT = new Atributo("color", i); :}
             |   X EQ NUM:i                                                      {: RESULT = new Atributo("x", i); :}
             |   Y EQ NUM:i                                                      {: RESULT = new Atributo("y", i); :}
             |   ALTO EQ NUM:i                                                   {: RESULT = new Atributo("alto", i); :}
             |   ANCHO EQ NUM:i                                                  {: RESULT = new Atributo("ancho", i); :}
             |   NOMBRE EQ STRINGLIT:i                                           {: RESULT = new Atributo("nombre", i); :}
             |   FUENTE EQ STRINGLIT:i                                           {: RESULT = new Atributo("fuente", i); :}
-            |   TAM EQ EQ NUM:i                                                 {: RESULT = new Atributo("tam", i); :}
+            |   TAM EQ NUM:i                                                 {: RESULT = new Atributo("tam", i); :}
             |   MAXIMO EQ NUM:i                                                 {: RESULT = new Atributo("max", i); :}
             |   MINIMO EQ NUM:i                                                 {: RESULT = new Atributo("min", i); :}
-            |   REFERENCIA EQ STRINGLIT:i                                       {: RESULT = new Atributo("ref", i); :}
-            |   PATH EQ STRINGLIT:i                                             {: RESULT = new Atributo("path", i); :}
-            |   BORDE EQ DQ VERDADERO DQ                                        {: RESULT = new Atributo("borde", true); :}
-            |   BORDE EQ DQ FALSO DQ                                            {: RESULT = new Atributo("borde", false); :}
-            |   NEGRITA EQ DQ VERDADERO DQ                                      {: RESULT = new Atributo("negrita", true); :}
-            |   NEGRITA EQ DQ FALSO DQ                                          {: RESULT = new Atributo("negrita", false); :}
-            |   CURSIVA EQ DQ VERDADERO DQ                                      {: RESULT = new Atributo("cursiva", true); :}
-            |   CURSIVA EQ DQ FALSO DQ                                          {: RESULT = new Atributo("cursiva", false); :}
-            |   AUTO_REPRODUCCION EQ DQ VERDADERO DQ                            {: RESULT = new Atributo("auto", true); :}
-            |   AUTO_REPRODUCCION EQ DQ FALSO DQ                                {: RESULT = new Atributo("auto", false); :}
-            |   ACCIONINICIAL EQ LCURL call_f:i RCURL                           {: RESULT = new Atributo("inicial", i); :}
-            |   ACCIONFINAL EQ LCURL call_f:i RCURL                             {: RESULT = new Atributo("final", i); :}
-            |   ACCION EQ LCURL call_f:i RCURL                                  {: RESULT = new Atributo("accion", i); :}
+            |   REFERENCIA EQ STRINGLIT:i                                       {: RESULT = new Atributo("Referencia", i); :}
+            |   PATH EQ STRINGLIT:i                                             {: RESULT = new Atributo("Ruta", i); :}
+            |   BORDE EQ  VERDADERO                                         {: RESULT = new Atributo("borde", true); :}
+            |   BORDE EQ  FALSO                                             {: RESULT = new Atributo("borde", false); :}
+            |   NEGRITA EQ  VERDADERO                                       {: RESULT = new Atributo("negrita", true); :}
+            |   NEGRITA EQ  FALSO                                           {: RESULT = new Atributo("negrita", false); :}
+            |   CURSIVA EQ  VERDADERO                                       {: RESULT = new Atributo("cursiva", true); :}
+            |   CURSIVA EQ  FALSO                                           {: RESULT = new Atributo("cursiva", false); :}
+            |   AUTO_REPRODUCCION EQ  VERDADERO                             {: RESULT = new Atributo("auto-reproduccion", true); :}
+            |   AUTO_REPRODUCCION EQ  FALSO                                 {: RESULT = new Atributo("auto-reproduccion", false); :}
+            |   ACCIONINICIAL EQ LCURL call_f:i RCURL                           {: RESULT = new Atributo("AlCargar", i); :}
+            |   ACCIONFINAL EQ LCURL call_f:i RCURL                             {: RESULT = new Atributo("AlCerrar", i); :}
+            |   ACCION EQ LCURL call_f:i RCURL                                  {: RESULT = new Atributo("AlClick", i); :}
             ;
 
 call_f      ::= ID_L:i LPAR l_E:e RPAR                                            {: RESULT = new call_f(i, e); :}

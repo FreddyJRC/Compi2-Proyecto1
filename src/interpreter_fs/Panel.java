@@ -43,7 +43,7 @@ public class Panel extends nodo {
             Object y = this.y.run(ambiente).val;
             
             if(alto instanceof Integer && ancho instanceof Integer)
-                panel.setSize((int)alto, (int)ancho);
+                panel.setSize((int)ancho, (int)alto);
             
             if(color instanceof String)
                 panel.setBackground(Color.decode((String) color));
