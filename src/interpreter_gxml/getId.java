@@ -19,5 +19,10 @@ public class getId extends nodo {
     public nodo run() {
         return this;
     }
+
+    @Override
+    public Object get() {
+        return this;
+    }
     
 }

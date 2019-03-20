@@ -127,6 +127,8 @@ import java_cup.runtime.*;
 <F_CALL>{
     /* identifiers */ 
         "nulo"                                      { return symbol(sym.NULO); }
+        "verdadero"                                 { return symbol(sym.VERDADERO); }
+        "falso"                                     { return symbol(sym.FALSO); }
         {Identifier}                                { return symbol(sym.ID_L, yytext()); }
 
         /* literals */

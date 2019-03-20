@@ -190,6 +190,8 @@ ARR_FN  ::= ID:i DOT DESCENDENTE LPAR RPAR                                      
         |   ID:o DOT ID:i DOT ASCENDENTE LPAR RPAR                              {: RESULT = new ASCENDENTE(o, i); :}
         |   ID:i DOT INVERTIR LPAR RPAR                                         {: RESULT = new INVERTIR(null, i); :}
         |   ID:o DOT ID:i DOT INVERTIR LPAR RPAR                                {: RESULT = new INVERTIR(o, i); :}
+        |   ID:i DOT MAP LPAR ID:f RPAR                                         {: RESULT = new Map(new getId(i), f); :}
+        |   ID:o DOT ID:i DOT MAP LPAR ID:f RPAR                                {: RESULT = new Map(new Obj_getId(new getId(o), i), f); :}
         ;
 
 WIN_FN  ::= ID:i DOT ALCARGAR LPAR RPAR                                         {: RESULT = new AlCargar(i, null); :}
@@ -251,18 +253,24 @@ E       ::= E:e1 OR E:e2                                                        
         |   E:e DOT TODOS LPAR ID:i RPAR                                        {: RESULT = new Todos(e, i); :}
         |   E:e DOT ALGUNO LPAR ID:i RPAR                                       {: RESULT = new Alguno(e, i); :}
         |   E:c Q E:t COLON E:f                                                 {: RESULT = new inline_if(c, t, f); :}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        |   CREARVENTANA LPAR E:c COMMA E:h COMMA E:w COMMA E:i RPAR            {: RESULT = new Ventana(c, h, w, i); :}
-        |   ID:i DOT CREARCONTENEDOR LPAR E:h COMMA E:w COMMA E:c COMMA E:b COMMA E:x COMMA E:y RPAR
-                                                                                {: RESULT = new Panel(i, h, w, c, b, x, y); :}
-        |   ID:i DOT CREARBOTON LPAR E:f COMMA E:t COMMA E:c COMMA E:x COMMA E:y COMMA E:r COMMA E:v COMMA E:h COMMA E:w RPAR
-                                                                                {: RESULT = new Boton(i, f, t, c, x, y, r, v, h, w); :}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         |   ID:e                                                                {: RESULT = new getId(e); :}
         |   E:e DOT ID:i                                                        {: RESULT = new Obj_getId(e, i); :}
         |   ID:e LBRACK NUM:i RBRACK                                            {: RESULT = new getArr(e, Integer.parseInt(i)); :}
         |   E:e DOT ID:i LBRACK NUM:n RBRACK                                    {: RESULT = new Obj_getArr(e, i, Integer.parseInt(n)); :}
         |   call_f:e                                                            {: RESULT = e; :}        
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        |   CREARVENTANA LPAR E:c COMMA E:h COMMA E:w COMMA E:i RPAR            {: RESULT = new Ventana(c, h, w, i); :}
+        |   E:i DOT CREARCONTENEDOR LPAR E:h COMMA E:w COMMA E:c COMMA E:b COMMA E:x COMMA E:y RPAR
+                                                                                {: RESULT = new Panel(i, h, w, c, b, x, y); :}
+        |   E:i DOT CREARBOTON LPAR E:f COMMA E:t COMMA E:c COMMA E:x COMMA E:y COMMA E:r COMMA E:v COMMA E:h COMMA E:w RPAR
+                                                                                {: RESULT = new Boton(i, f, t, c, x, y, r, v, h, w); :}
+        |   LEERGXML LPAR E:e RPAR                                              {: RESULT = new LeerGXML(e); :}
+        |   E:i DOT OPI LPAR E:e RPAR                                           {: RESULT = new OPI(i, e); :}
+        |   E:i DOT OPN LPAR E:e RPAR                                           {: RESULT = new OPI(i, e); :}
+        |   E:i DOT OPE LPAR E:e RPAR                                           {: RESULT = new OPE(i, e); :}
+        |   CADA LPAR E:e RPAR                                                  {: RESULT = new CADA(e); :}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         |   NUM:e                                                               {: RESULT = new num(e); :}
         |   STRING:e                                                            {: RESULT = new str(e); :}
         |   NULO                                                                {: RESULT = new nulo(); :}

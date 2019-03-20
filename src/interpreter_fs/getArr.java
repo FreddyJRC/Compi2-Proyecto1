@@ -25,7 +25,11 @@ public class getArr extends nodo {
     public nodo run(env ambiente) {
         simbol arr = ambiente.get(this.id);
         if(arr.val instanceof LinkedList){
-            this.val = ((LinkedList<nodo>)arr.val).get(pos).val;
+            Object t = ((LinkedList)arr.val).get(pos);
+            if(t instanceof nodo)
+                this.val = ((nodo) t).val;
+            else if(t instanceof simbol)
+                this.val = ((simbol) t).val;
         }
         
         return this;

@@ -17,10 +17,10 @@ import javax.swing.JPanel;
  */
 public class Panel extends nodo {
     
-    String id;
-    nodo alto, ancho, color, borde, x, y;
+    //String id;
+    nodo id, alto, ancho, color, borde, x, y;
 
-    public Panel(String i, nodo h, nodo w, nodo c, nodo b, nodo x, nodo y) {
+    public Panel(nodo i, nodo h, nodo w, nodo c, nodo b, nodo x, nodo y) {
         this.id = i;
         this.alto = h;
         this.ancho = w;
@@ -32,7 +32,7 @@ public class Panel extends nodo {
 
     @Override
     public nodo run(env ambiente) {
-        Object ventana = ambiente.get(id).val;
+        Object ventana = this.id.run(ambiente).val;
         if(ventana instanceof JFrame){
             JPanel panel = new JPanel();
             Object alto = this.alto.run(ambiente).val;

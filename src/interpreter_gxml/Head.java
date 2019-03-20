@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,6 +78,37 @@ public class Head extends nodo {
         return Optional.ofNullable(filename)
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
+    }
+
+    @Override
+    public Object get() {
+        Hashtable t = new Hashtable<String, interpreter_fs.simbol>();
+        
+        if(imp != null){
+            for(String i : imp){
+                Path file = Paths.get(proyecto.display.home, i);
+                String ext = getExtension(i).get();
+                
+                if(ext.equalsIgnoreCase("gxml")){       
+                    
+                    try{
+                        System.out.println("importando: " + file);
+                        grammar_gxml.parser p = new grammar_gxml.parser(new String(Files.readAllBytes(file)));
+                        p.parse();
+
+                        t.putAll((Map) p.root.get());
+                    } catch (Exception ex) {
+                        Logger.getLogger(Head.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+        
+        for(nodo e : cont){
+            t.putAll((Map) e.get());
+        }
+        
+        return t;
     }
     
 }

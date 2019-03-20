@@ -5,8 +5,11 @@
  */
 package interpreter_gxml;
 
+import interpreter_fs.Obj_a;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  *
@@ -49,6 +52,29 @@ public class Contenedor extends nodo {
         }
         
         return this;
+    }
+
+    @Override
+    public Object get() {
+        Hashtable t = new Hashtable<String, interpreter_fs.simbol>();
+        LinkedList<interpreter_fs.Obj_a> attr = new LinkedList<>();
+        
+        attr.add(new Obj_a("etiqueta", "contenedor", 0));
+        attr.add(new Obj_a("id", attrs.get("id").toString().replaceAll("^\"|\"$", ""), 0));
+        attr.add(new Obj_a("alto", (attrs.get("alto") != null) ? Integer.parseInt((String) attrs.get("alto")) : 50 , 0));
+        attr.add(new Obj_a("ancho", (attrs.get("ancho") != null) ? Integer.parseInt((String) attrs.get("ancho")) : 50 , 0));
+        attr.add(new Obj_a("color", (attrs.get("color") != null) ? attrs.get("color").toString().replaceAll("^\"|\"$", "") : "#000000", 0));
+        attr.add(new Obj_a("borde", (attrs.get("borde") != null && ((boolean) attrs.get("borde"))), 0));
+        attr.add(new Obj_a("x", Integer.parseInt((String) attrs.get("x")), 0));
+        attr.add(new Obj_a("y", Integer.parseInt((String) attrs.get("y")), 0));
+        
+        t.put(attrs.get("id").toString().replaceAll("^\"|\"$", ""), new interpreter_fs.simbol("Obj", attr));
+        
+        for(nodo e : cont){
+            t.putAll((Map) e.get());
+        }
+        
+        return t;
     }
     
 }

@@ -1,0 +1,86 @@
+package grammar_gdato;
+import java_cup.runtime.*;
+import java.io.*;
+import java.util.LinkedList;
+import java.util.HashMap;
+
+parser code
+{:
+    private Yylex lexer;
+    private File file;
+    
+    public parser( String in ) {
+        this();
+        
+        lexer = new Yylex( new StringReader( in ) );
+    }
+
+    //Metodo al que se llama automaticamente ante algún error sintáctico
+    public void syntax_error(Symbol s)
+    {        
+        System.err.println("Error Sintáctico en la Línea " + (s.left) +" Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+        //Esemanticos e = new Esemanticos(String.valueOf(s.value),"Sintactico", s.left + 1, s.right, "No se esperaba ese valor");
+        //ErroresSintacticos.add(e);
+    }
+ 
+
+    //Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
+    {        
+        System.err.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido.");
+        //Esemanticos e = new Esemanticos(String.valueOf(s.value),"Sintactico", s.left + 1, s.right, "No se esperaba ese valor");
+        //ErroresSintacticos.add(e);
+    }
+
+    public LinkedList root;
+:};
+
+scan with
+{:
+    return lexer.next_token();
+:};
+
+terminal                OPENTAG, CLOSETAG, SLASH, LISTA, PRINCIPAL, VERDADERO, FALSO, NULO;
+terminal    String      NUM, ID, STRING;
+
+non terminal            S;
+non terminal LinkedList L, LIST, DATOS;
+non terminal Object     DATO;
+
+
+S           ::= L:l                                                             {: parser.root = l; :}
+            ;
+
+L           ::= OPENTAG LISTA CLOSETAG LIST:l OPENTAG SLASH LISTA CLOSETAG      {: RESULT = l; :}
+            ;
+
+LIST        ::= LIST:l OPENTAG PRINCIPAL CLOSETAG DATOS:d OPENTAG SLASH PRINCIPAL CLOSETAG
+                                                                                {: l.add(new interpreter_fs.simbol("Obj", d));
+                                                                                   RESULT = l; :}
+            |   OPENTAG PRINCIPAL CLOSETAG DATOS:d OPENTAG SLASH PRINCIPAL CLOSETAG
+                                                                                {: RESULT = new LinkedList<interpreter_fs.simbol>(); 
+                                                                                   RESULT.add(new interpreter_fs.simbol("Obj", d));
+                                                                                :}
+            ;
+
+DATOS       ::= DATOS:l OPENTAG ID:i CLOSETAG DATO:d OPENTAG SLASH ID CLOSETAG  {: l.add(new interpreter_fs.Obj_a(i, d, 0));
+                                                                                   RESULT = l;
+                                                                                :}
+            |   OPENTAG ID:i CLOSETAG DATO:d OPENTAG SLASH ID CLOSETAG          {: RESULT = new LinkedList<interpreter_fs.nodo>();
+                                                                                   RESULT.add(new interpreter_fs.Obj_a(i, d, 0));
+                                                                                :}
+            ;
+
+DATO        ::= STRING:i                                                        {: RESULT = i; :}
+            |   NUM:i                                                           {: try{
+                                                                                        RESULT = Integer.parseInt(i);
+                                                                                    }catch(NumberFormatException ex){}
+
+                                                                                    try{
+                                                                                        RESULT = Double.parseDouble(i);
+                                                                                    }catch(NumberFormatException ex){}
+                                                                                :}
+            |   VERDADERO                                                       {: RESULT = true; :}
+            |   FALSO                                                           {: RESULT = false; :}
+            |   NULO                                                            {: RESULT = null; :}
+            ;

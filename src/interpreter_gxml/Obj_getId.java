@@ -25,5 +25,12 @@ public class Obj_getId extends nodo {
         this.val = e.val + "." + id;
         return this;
     }
+
+    @Override
+    public Object get() {
+        e.get();
+        this.val = e.val + "." + id;
+        return this;
+    }
     
 }

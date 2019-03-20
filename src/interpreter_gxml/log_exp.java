@@ -33,5 +33,19 @@ public class log_exp extends nodo {
         
         return this;
     }
+
+    @Override
+    public Object get() {
+        if (e2 == null){
+            e1.get();
+            this.val = op + e1.val;
+        } else {
+            e1.get();
+            e2.get();
+            this.val = e1.val + op + e2.val;
+        }
+        
+        return this;
+    }
     
 }

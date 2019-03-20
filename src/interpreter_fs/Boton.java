@@ -16,10 +16,10 @@ import javax.swing.JPanel;
  */
 public class Boton extends nodo {
 
-    String id;
-    nodo fuente, tamano, color, x, y, referencia, valor, alto, ancho;
+    //String id;
+    nodo id, fuente, tamano, color, x, y, referencia, valor, alto, ancho;
     
-    public Boton(String i, nodo f, nodo t, nodo c, nodo x, nodo y, nodo r, nodo v, nodo h, nodo w) {
+    public Boton(nodo i, nodo f, nodo t, nodo c, nodo x, nodo y, nodo r, nodo v, nodo h, nodo w) {
         this.id = i;
         this.fuente = f;
         this.tamano = t;
@@ -35,7 +35,7 @@ public class Boton extends nodo {
     @Override
     public nodo run(env ambiente) {
         
-        Object panel = ambiente.get(id).val;
+        Object panel = this.id.run(ambiente).val;
         
         if(panel instanceof JPanel){
             JButton btn = new JButton();

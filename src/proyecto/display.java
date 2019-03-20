@@ -12,13 +12,7 @@ package proyecto;
 public class display {
     
     public static String home;
-    
-    public void setHome(String home){
-        display.home = home;
-    }
-    
-    public String getHome(){
-        return display.home;
-    }
+    public static String fs_file;
+    public static String gxml_file;
     
 }

@@ -5,21 +5,30 @@
  */
 package interpreter_fs;
 
+import java.util.Hashtable;
+
 /**
  *
  * @author freddy
  */
-public class simbol extends nodo{
-    String tipo;
-    public Object start, exit;
+public class OPI extends nodo {
+
+    //String id;
+    nodo id, e;
     
-    public simbol(String tipo, Object val){
-        this.tipo = tipo;
-        this.val = val;
+    public OPI(nodo i, nodo e) {
+        this.id = i;
+        this.e = e;
     }
 
     @Override
     public nodo run(env ambiente) {
+        
+        Hashtable tmp = (Hashtable) this.id.run(ambiente).val;
+        
+        this.val = ((simbol) tmp.get(e.run(ambiente).val)).val;
+        
         return this;
     }
+    
 }

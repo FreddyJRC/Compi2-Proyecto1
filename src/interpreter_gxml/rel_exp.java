@@ -27,5 +27,13 @@ public class rel_exp extends nodo {
         this.val = e1.val + op + e2.val;
         return this;
     }
+
+    @Override
+    public Object get() {
+        e1.get();
+        e2.get();
+        this.val = e1.val + op + e2.val;
+        return this;
+    }
     
 }

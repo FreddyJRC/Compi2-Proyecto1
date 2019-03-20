@@ -7,6 +7,7 @@ package interpreter_fs;
 
 import java.nio.charset.Charset;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -68,5 +69,9 @@ class env {
     
     public boolean exists(String id){
         return tabla.containsKey(id);
+    }
+
+    public void putAll(Map map) {
+        tabla.putAll(map);
     }
 }

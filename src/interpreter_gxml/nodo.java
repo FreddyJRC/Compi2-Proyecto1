@@ -5,6 +5,8 @@
  */
 package interpreter_gxml;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author freddy
@@ -14,4 +16,5 @@ public abstract class nodo {
     String padre;
     String ColorVentana;
     public abstract nodo run();
+    public abstract Object get();
 }

@@ -25,5 +25,12 @@ public class aumento extends nodo {
         this.val = e.val + op;
         return this;
     }
+
+    @Override
+    public Object get() {
+        this.e.get();
+        this.val = e.val + op;
+        return this;
+    }
     
 }

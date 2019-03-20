@@ -37,5 +37,22 @@ public class call_f extends nodo {
         this.val = this.val + ")";
         return this;
     }
+
+    @Override
+    public Object get() {
+        this.val = id + "(";
+        
+        if(e != null){
+            e.forEach((i)->{
+                i.get();
+                this.val = this.val + i.val.toString() + ", ";
+            });
+            
+            this.val = this.val.toString().substring(0, this.val.toString().length() - 2);
+        }
+        
+        this.val = this.val + ")";
+        return this;
+    }
     
 }

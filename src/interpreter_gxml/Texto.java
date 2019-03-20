@@ -5,7 +5,10 @@
  */
 package interpreter_gxml;
 
+import interpreter_fs.Obj_a;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
 
 /**
  *
@@ -41,6 +44,25 @@ public class Texto extends nodo {
                             ");\n"; 
 
         return this;
+    }
+
+    @Override
+    public Object get() {
+        Hashtable t = new Hashtable<String, interpreter_fs.simbol>();
+        LinkedList<interpreter_fs.Obj_a> attr = new LinkedList<>();
+        
+        attr.add(new Obj_a("etiqueta", "texto", 0));
+        attr.add(new Obj_a("fuente", (attrs.get("fuente") != null) ? attrs.get("fuente").toString().replaceAll("^\"|\"$", "") : "Arial", 0));
+        attr.add(new Obj_a("tam", (attrs.get("tam") != null) ? Integer.parseInt(attrs.get("tam").toString()) : 12, 0));
+        attr.add(new Obj_a("color", (attrs.get("color") != null) ? attrs.get("color").toString().replaceAll("^\"|\"$", "") : "#000000", 0));
+        attr.add(new Obj_a("x", Integer.parseInt((String) attrs.get("x")), 0));
+        attr.add(new Obj_a("y", Integer.parseInt((String) attrs.get("y")), 0));
+        attr.add(new Obj_a("negrita", (attrs.get("negrita") != null && ((boolean) attrs.get("negrita"))), 0));
+        attr.add(new Obj_a("cursiva", (attrs.get("cursiva") != null && ((boolean) attrs.get("cursiva"))), 0));
+        attr.add(new Obj_a("valor", def, 0));
+        
+        t.put(attrs.get("nombre").toString().replaceAll("^\"|\"$", ""), new interpreter_fs.simbol("Obj", attr));
+        return t;
     }
     
 }

@@ -5,7 +5,9 @@
  */
 package interpreter_gxml;
 
+import interpreter_fs.Obj_a;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 /**
@@ -105,6 +107,69 @@ public class Control extends nodo {
         
         lista = lista.substring(0, lista.length() - 2);
         return lista;
+    }
+
+    @Override
+    public Object get() {
+        Hashtable t = new Hashtable<String, interpreter_fs.simbol>();
+        LinkedList<interpreter_fs.Obj_a> attr = new LinkedList<>();
+        
+        attr.add(new Obj_a("etiqueta", "control", 0));
+        
+        switch(attrs.get("tipo").toString().toLowerCase().replaceAll("^\"|\"$", "")){
+            case "texto":
+                attr.add(new Obj_a("tipo", "texto", 0));
+                attr.add(new Obj_a("alto", (attrs.get("alto") != null) ? Integer.parseInt((String) attrs.get("alto")) : 50 , 0));
+                attr.add(new Obj_a("ancho", (attrs.get("ancho") != null) ? Integer.parseInt((String) attrs.get("ancho")) : 50 , 0));
+                attr.add(new Obj_a("fuente", (attrs.get("fuente") != null) ? attrs.get("fuente").toString().replaceAll("^\"|\"$", "") : "Arial", 0));
+                attr.add(new Obj_a("tam", (attrs.get("tam") != null) ? Integer.parseInt(attrs.get("tam").toString()) : 12, 0));
+                attr.add(new Obj_a("color", (attrs.get("color") != null) ? attrs.get("color").toString().replaceAll("^\"|\"$", "") : "#000000", 0));
+                attr.add(new Obj_a("x", Integer.parseInt((String) attrs.get("x")), 0));
+                attr.add(new Obj_a("y", Integer.parseInt((String) attrs.get("y")), 0));
+                attr.add(new Obj_a("negrita", (attrs.get("negrita") != null && ((boolean) attrs.get("negrita"))), 0));
+                attr.add(new Obj_a("cursiva", (attrs.get("cursiva") != null && ((boolean) attrs.get("cursiva"))), 0));
+                attr.add(new Obj_a("valor", def, 0));
+                break;
+                
+            case "numerico":
+                attr.add(new Obj_a("tipo", "numerico", 0));
+                attr.add(new Obj_a("alto", (attrs.get("alto") != null) ? Integer.parseInt((String) attrs.get("alto")) : 50 , 0));
+                attr.add(new Obj_a("ancho", (attrs.get("ancho") != null) ? Integer.parseInt((String) attrs.get("ancho")) : 50 , 0));
+                attr.add(new Obj_a("max", (attrs.get("max") != null) ? Integer.parseInt((String) attrs.get("max")) : null , 0));
+                attr.add(new Obj_a("min", (attrs.get("min") != null) ? Integer.parseInt((String) attrs.get("min")) : null , 0));
+                attr.add(new Obj_a("x", Integer.parseInt((String) attrs.get("x")), 0));
+                attr.add(new Obj_a("y", Integer.parseInt((String) attrs.get("y")), 0));
+                attr.add(new Obj_a("valor", def, 0));
+                break;
+                
+            case "textoarea":
+                attr.add(new Obj_a("tipo", "textoarea", 0));
+                attr.add(new Obj_a("alto", (attrs.get("alto") != null) ? Integer.parseInt((String) attrs.get("alto")) : 50 , 0));
+                attr.add(new Obj_a("ancho", (attrs.get("ancho") != null) ? Integer.parseInt((String) attrs.get("ancho")) : 50 , 0));
+                attr.add(new Obj_a("fuente", (attrs.get("fuente") != null) ? attrs.get("fuente").toString().replaceAll("^\"|\"$", "") : "Arial", 0));
+                attr.add(new Obj_a("tam", (attrs.get("tam") != null) ? Integer.parseInt(attrs.get("tam").toString()) : 12, 0));
+                attr.add(new Obj_a("color", (attrs.get("color") != null) ? attrs.get("color").toString().replaceAll("^\"|\"$", "") : "#000000", 0));
+                attr.add(new Obj_a("x", Integer.parseInt((String) attrs.get("x")), 0));
+                attr.add(new Obj_a("y", Integer.parseInt((String) attrs.get("y")), 0));
+                attr.add(new Obj_a("negrita", (attrs.get("negrita") != null && ((boolean) attrs.get("negrita"))), 0));
+                attr.add(new Obj_a("cursiva", (attrs.get("cursiva") != null && ((boolean) attrs.get("cursiva"))), 0));
+                attr.add(new Obj_a("valor", def, 0));
+                break;
+                
+            case "desplegable":
+                attr.add(new Obj_a("tipo", "desplegable", 0));
+                attr.add(new Obj_a("alto", (attrs.get("alto") != null) ? Integer.parseInt((String) attrs.get("alto")) : 50 , 0));
+                attr.add(new Obj_a("ancho", (attrs.get("ancho") != null) ? Integer.parseInt((String) attrs.get("ancho")) : 50 , 0));
+                attr.add(new Obj_a("lista", datos, 0));
+                attr.add(new Obj_a("x", Integer.parseInt((String) attrs.get("x")), 0));
+                attr.add(new Obj_a("y", Integer.parseInt((String) attrs.get("y")), 0));
+                attr.add(new Obj_a("valor", def, 0));
+                break;
+                
+        }
+        
+        t.put(attrs.get("nombre").toString().replaceAll("^\"|\"$", ""), new interpreter_fs.simbol("Obj", attr));
+        return t;
     }
     
 }

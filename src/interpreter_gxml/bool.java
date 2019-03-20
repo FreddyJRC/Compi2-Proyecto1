@@ -5,6 +5,8 @@
  */
 package interpreter_gxml;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author freddy
@@ -17,6 +19,11 @@ public class bool extends nodo {
     
     @Override
     public nodo run() {
+        return this;
+    }
+
+    @Override
+    public Object get() {
         return this;
     }
     

@@ -6,6 +6,7 @@
 package interpreter_gxml;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  *
@@ -24,6 +25,11 @@ public class Multimedia extends nodo {
         this.val = "";
         
         return this;
+    }
+
+    @Override
+    public Object get() {
+        return new Hashtable<>();
     }
     
 }

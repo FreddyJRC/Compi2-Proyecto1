@@ -27,5 +27,12 @@ public class Obj_getArr extends nodo {
         this.val = e.val + "." + id + "[" + i + "]";
         return this;
     }
+
+    @Override
+    public Object get() {
+        this.e.get();
+        this.val = e.val + "." + id + "[" + i + "]";
+        return this;
+    }
     
 }
